@@ -4,9 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.yyt.UniAuth.mapper.OrganizationMapper;
+import com.yyt.UniAuth.mapper.UserMapper;
+import com.yyt.UniAuth.model.entity.OrgUsers;
 import com.yyt.UniAuth.model.entity.Organization;
+import com.yyt.UniAuth.model.entity.User;
+import com.yyt.UniAuth.model.vo.OrgAddUserVO;
 
 @Service
 public class OrgService {
@@ -15,6 +20,8 @@ public class OrgService {
 	
 	@Autowired
 	private OrganizationMapper organizationMapper;
+	@Autowired
+	private UserMapper userMapper;
 	
 	public void addOrg(Organization org) {
 		organizationMapper.addOrg(org);
@@ -42,6 +49,36 @@ public class OrgService {
 		organizationMapper.delOrg(org);;
 		logger.info("删除部门[" + org.getId() + "]成功");
 		return "OK";
+	}
+	
+	@Transactional
+	public String addUsersToOrg(OrgAddUserVO addUserVO) {
+		Organization org = organizationMapper.getOrgInfoById(addUserVO.getOrgId());
+		if(org == null) {
+			return "部门id[" + addUserVO.getOrgId() + "]在系统中不存在";
+		}
+		StringBuffer sb = new StringBuffer();
+		for(Integer userId : addUserVO.getUserIds()) {
+			User user = userMapper.getUserById(userId);
+			if(user == null) {
+				logger.warn("用户id[" + userId + "]在系统中不存在");
+				if(sb.length() > 0) {
+					sb.append(",");
+				}
+				sb.append(userId);
+				continue;
+			}
+			OrgUsers orgUsers = new OrgUsers();
+			orgUsers.setOrgId(addUserVO.getOrgId());
+			orgUsers.setUserId(userId);
+			orgUsers.setTenantId(org.getTenantId());
+			organizationMapper.addUserToOrg(orgUsers);
+		}
+		if(sb.length() == 0) {
+			return "OK";
+		} else {
+			return sb.toString();
+		}
 	}
 	
 }
