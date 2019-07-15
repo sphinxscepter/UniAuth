@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yyt.UniAuth.mapper.TenantMapper">
+    
+    <sql id="cols">
+    	t.id,t.del,t.tenant_name as tenantName,t.description,t.custom_id as customId
+    </sql>
+    
+    <select id="getTenantInfoById" resultType="com.yyt.UniAuth.model.entity.Tenant">
+    	select 
+    		<include refid="cols"></include>
+    	from tenant t where t.id = ${id}
+    </select>
+    
+    <select id="getTenantCountByName" resultType="int">
+    	select count(id) from tenant t where t.tenant_name = #{tenantName}
+    </select>
+    
+    <insert id="addNewTenant" useGeneratedKeys="true" parameterType="com.yyt.UniAuth.model.entity.Tenant" keyProperty="id" keyColumn="id">
+    	insert into tenant(tenant_name,description,custom_id)
+    	values(#{tenantName},#{description},${customId})
+    </insert>
+    
+    <update id="delTenant" parameterType="com.yyt.UniAuth.model.entity.Tenant">
+    	update tenant set del = 1 where id = ${id} 
+    </update>
+    
+</mapper>

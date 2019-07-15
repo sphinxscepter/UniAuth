@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yyt.UniAuth.mapper.UserMapper">
+    
+    <sql id="cols">
+    	t.id,t.del,t.username,t.password,t.tenant_id as tenantId
+    </sql>
+    
+    <select id="getUserByMobile" resultType="com.yyt.UniAuth.model.entity.User">
+    	select 
+    		<include refid="cols"></include>
+    	from user t where t.username = #{mobile}
+    </select>
+    
+    <select id="getUserById" resultType="com.yyt.UniAuth.model.entity.User">
+    	select 
+    		<include refid="cols"></include>
+    	from user t where t.id = ${id}
+    </select>
+    
+    <insert id="addUser" useGeneratedKeys="true" parameterType="com.yyt.UniAuth.model.entity.User" keyProperty="id" keyColumn="id">
+    	insert into user(username,password,tenant_id)
+    	values(#{username},#{password},${tenantId})
+    </insert>
+    
+</mapper>

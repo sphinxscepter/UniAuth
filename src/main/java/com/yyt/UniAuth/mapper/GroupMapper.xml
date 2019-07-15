@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yyt.UniAuth.mapper.GroupMapper">
+    
+    <sql id="cols">
+    	t.id,t.del,t.grp_name as grpName,t.app_id as appId,t.tenant_id as tenantId
+    </sql>
+    
+    <sql id="grp_users_cols">
+    	t.id,t.grp_id as grpId,t.user_id as userId,t.tenant_id as tenantId
+    </sql>
+    
+    <select id="getGrpInfoById" resultType="com.yyt.UniAuth.model.entity.Group">
+    	select 
+    		<include refid="cols"></include>
+    	from group t where t.id = ${id}
+    </select>
+    
+    <insert id="addNewGroup" useGeneratedKeys="true" parameterType="com.yyt.UniAuth.model.entity.Group" keyProperty="id" keyColumn="id">
+    	insert into group(grp_name,app_id,tenant_id)
+    	values(#{grpName},${appId},${tenantId})
+    </insert>
+    
+    <insert id="addUserToGroup" useGeneratedKeys="true" parameterType="com.yyt.UniAuth.model.entity.GroupUsers" keyProperty="id" keyColumn="id">
+    	insert into grp_users(grp_id,user_id,tenant_id)
+    	values(${grpId},${userId},${tenantId})
+    </insert>
+    
+    <select id="getGroupsByUser" resultType="com.yyt.UniAuth.model.entity.GroupUsers">
+    	select 
+    		<include refid="grp_users_cols"></include>
+    	from grp_users t where t.user_id = ${userId}
+    </select>
+    
+    <select id="getUserByGroup" resultType="com.yyt.UniAuth.model.entity.GroupUsers">
+    	select 
+    		<include refid="grp_users_cols"></include>
+    	from grp_users t where t.grp_id = ${grpId}
+    </select>
+    
+    <select id="getGrpsByApp" resultType="com.yyt.UniAuth.model.entity.Group">
+    	select 
+    		<include refid="cols"></include>
+    	from group t where t.app_id = ${appId}
+    </select>
+    
+</mapper>

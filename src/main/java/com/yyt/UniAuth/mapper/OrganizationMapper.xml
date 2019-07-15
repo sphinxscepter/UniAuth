@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yyt.UniAuth.mapper.OrganizationMapper">
+    
+    <sql id="cols">
+    	t.id,t.del,t.org_name as orgName,t.parent_id as parentId,t.parent_orgs as parentOrgs,
+    	t.tenant_id as tenantId
+    </sql>
+    
+    <sql id="org_users_cols">
+    	t.id,t.org_id as orgId,t.user_id as userId,t.tenant_id as tenantId
+    </sql>
+    
+    <select id="getOrgInfoById" resultType="com.yyt.UniAuth.model.entity.Organization">
+    	select 
+    		<include refid="cols"></include>
+    	from org t where t.id = ${id}
+    </select>
+    
+    <select id="getOrgsByTenantId" resultType="com.yyt.UniAuth.model.entity.Organization">
+    	select 
+    		<include refid="cols"></include>
+    	from org t where t.tenant_id = ${tenantId}
+    </select>
+    
+    <insert id="addOrg" useGeneratedKeys="true" parameterType="com.yyt.UniAuth.model.entity.Organization" keyProperty="id" keyColumn="id">
+    	insert into org(org_name,parent_id,parent_orgs,tenant_id)
+    	values(#{orgName},${parentId},#{parentOrgs},${tenantId})
+    </insert>
+    
+    <update id="delOrg" parameterType="com.yyt.UniAuth.model.entity.Organization">
+    	update org set del = 1 where id = ${id}
+    </update>
+    
+    <insert id="addUserToOrg" useGeneratedKeys="true" parameterType="com.yyt.UniAuth.model.entity.OrgUsers" keyProperty="id" keyColumn="id">
+    	insert into org(org_id,user_id,tenant_id)
+    	values(#{orgId},${userId},${tenantId})
+    </insert>
+    
+    <select id="getUsersByOrgId" resultType="com.yyt.UniAuth.model.entity.OrgUsers">
+    	select 
+    		<include refid="org_users_cols"></include>
+    	from org t where t.org_id = ${orgId}
+    	limit ${start},${size}
+    </select>
+    
+</mapper>

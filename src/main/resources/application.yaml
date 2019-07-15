@@ -1,0 +1,43 @@
+server:
+ port: 8086
+ servlet:
+  context-path: /
+  
+spring:
+ mvc:
+  static-path-pattern: /static/**
+ datasource:
+  url: jdbc:mysql://43.231.160.144:3306/uniauth?useUnicode=true&characterEncoding=utf-8
+  username: root
+  password: smartlog
+  dirver-class: com.mysql.jdbc.Driver
+  type: com.alibaba.druid.pool.DruidDataSource
+  initialSize: 1
+  minIdle: 1
+  maxActive: 5
+  maxWait: 60000
+  timeBetweenEvictionRunsMillis: 60000
+  minEvictableIdleTimeMillis: 300000
+  testWhileIdle: true
+  testOnBorrow: true
+  testOnReturn: false
+  poolPreparedStatements: true
+  maxPoolPreparedStatementPerConnectionSize: 20
+ redis:
+  host: 127.0.0.1
+  port: 33044
+  password: su360-redis-server
+  timeout: 1000
+  database: 1
+  pool:
+   max-active: 5
+   max-wait: 10
+   max-idle: 1
+   min-idle: 0 
+
+logging:
+ config: classpath:logback.xml
+ 
+uni-auth:
+ jwtSecret: Su360-UniAuth-Test
+ jwtIssuer: Su360-UniAuth

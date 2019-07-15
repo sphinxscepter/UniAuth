@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yyt.UniAuth.mapper.AppMapper">
+    
+    <sql id="cols">
+    	t.id,t.del,t.app_name as appName,t.app_id as appId,t.app_secret as appSecret,t.tenant_id as tenantId
+    </sql>
+    
+    <select id="getAppById" resultType="com.yyt.UniAuth.model.entity.App">
+    	select 
+    		<include refid="cols"></include>
+    	from app t where t.id = ${id}
+    </select>
+    
+    <select id="getAppByAppId" resultType="com.yyt.UniAuth.model.entity.App">
+    	select 
+    		<include refid="cols"></include>
+    	from app t where t.del = 0 and t.app_id = #{appId}
+    </select>
+    
+    <select id="getAppsByTenantId" resultType="com.yyt.UniAuth.model.entity.App">
+    	select 
+    		<include refid="cols"></include>
+    	from app t where t.del = 0 and t.tenant_id = ${tenantId}
+    </select>
+    
+    <select id="getAppCountByTenantId" resultType="int">
+    	select count(id) from app t where t.del = 0 and t.tenant_id = ${tenantId}
+    </select>
+    
+    <select id="getAppCountByAppNameAndTenantId" resultType="int">
+    	select count(id) from app t where t.del = 0 and t.app_name = #{appName} and t.tenant_id = ${tenantId}
+    </select>
+    
+    <insert id="addApp" useGeneratedKeys="true" parameterType="com.yyt.UniAuth.model.entity.App" keyProperty="id" keyColumn="id">
+    	insert into app(app_name,app_id,app_secret,tenant_id)
+    	values(#{appName},#{appId},#{appSecret},${tenantId})
+    </insert>
+    
+    <update id="updateAppSecret" parameterType="com.yyt.UniAuth.model.entity.App">
+    	update app set app_secret = #{appSecret} where id = ${id}
+    </update>
+    
+    <update id="delApp" parameterType="com.yyt.UniAuth.model.entity.App">
+    	update app set del = 1 where id = ${id}
+    </update>
+    
+</mapper>
